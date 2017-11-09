@@ -14,28 +14,51 @@ var detectNetwork = function(cardNumber) {
 
   // Once you've read this, go ahead and try to implement this function, then return to the console.
   
- var prefix = cardNumber.slice(0, 2);
+ var prefix1 = cardNumber.slice(0, 1);
+ var prefix2 = cardNumber.slice(0, 2);
+ var prefix3 = cardNumber.slice(0, 3);
+ var prefix4 = cardNumber.slice(0, 4);
  var length = cardNumber.length;
  
- switch (true) {
-  case (prefix === '38' || prefix === '39'):
-  case (length === 14):
-    return "Diner\'s Club";
- 
-  case (prefix === '34' || prefix === '37'):
-  case (length === 15):
-    return "American Express";
-  
-  case (Number(prefix) >= 51 && prefix <= 55):
+  switch (true) {
+  //Diner's Club
+  case (prefix2 === '38' || prefix2 === '39'):
+    if (length === 14) {
+      return "Diner\'s Club";
+    }
+    break;
+  //American Express
+  case (prefix2 === '34' || prefix2 === '37'):
+    if(length === 15) {
+      return "American Express";
+    }
+    break;
+  // MasterCard
+  case (Number(prefix2) >= 51 && Number(prefix2) <= 55):
     if (length === 16) {
       return "MasterCard";
     }
     break;
-  case(prefix[0] === '4'):
+  //Visa
+  case(prefix1 === '4'):
      if (length === 13 || length === 16 || length === 19) {
        return "Visa";
      }
+     break;
+  //Discover
+  case (prefix4 === '6011' || Number(prefix3) >= 644 && Number(prefix3) <= 649 || prefix2 === '65'):
+     if (length === 16 || length === 19) {
+       return "Discover";
+     }
+     break;
+    
+  //Maestro
+  case (prefix4 === '5018' || prefix4 === '5020' || prefix4 === '5038' || prefix4 === '6304'):
+    if (length >= 12 && length <= 19) {
+      return "Maestro";
+    } 
  }
-};
+}; 
+
 
 
