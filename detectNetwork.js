@@ -6,7 +6,6 @@
 // There are two indicators:
 //   1. The first few numbers (called the prefix)
 //   2. The number of digits in the number (called the length)
-
 var detectNetwork = function(cardNumber) {
   // Note: `cardNumber` will always be a string
   // The Diner's Club network always starts with a 38 or 39 and is 14 digits long
@@ -14,51 +13,101 @@ var detectNetwork = function(cardNumber) {
 
   // Once you've read this, go ahead and try to implement this function, then return to the console.
   
- var prefix1 = cardNumber.slice(0, 1);
- var prefix2 = cardNumber.slice(0, 2);
- var prefix3 = cardNumber.slice(0, 3);
- var prefix4 = cardNumber.slice(0, 4);
  var length = cardNumber.length;
  
   switch (true) {
-  //Diner's Club
-  case (prefix2 === '38' || prefix2 === '39'):
-    if (length === 14) {
-      return "Diner\'s Club";
-    }
-    break;
-  //American Express
-  case (prefix2 === '34' || prefix2 === '37'):
-    if(length === 15) {
-      return "American Express";
-    }
-    break;
-  // MasterCard
-  case (Number(prefix2) >= 51 && Number(prefix2) <= 55):
-    if (length === 16) {
-      return "MasterCard";
-    }
-    break;
-  //Visa
-  case(prefix1 === '4'):
-     if (length === 13 || length === 16 || length === 19) {
-       return "Visa";
-     }
-     break;
+  //China UnionPay
+  case (
+          getRange(622126, 622925).includes(Number(getPrefix(cardNumber, 0, 6))) ||
+          getRange(6282, 6288).includes(Number(getPrefix(cardNumber, 0, 4))) ||
+          getRange(624, 626).includes(Number(getPrefix(cardNumber, 0, 3)))
+        ):
+          if(getRange(16, 19).includes(length)) {
+            return "China UnionPay";
+          }
+          break;
+  //Switch
+  case (
+          getPrefix(cardNumber, 0, 6) === '564182' || 
+          getPrefix(cardNumber, 0, 6) === '633110' ||
+          getPrefix(cardNumber, 0, 4) === '6333' ||
+          getPrefix(cardNumber, 0, 4) === '6759' ||
+          getPrefix(cardNumber, 0, 4) === '4903' ||
+          getPrefix(cardNumber, 0, 4) === '4905' ||
+          getPrefix(cardNumber, 0, 4) === '4911' ||
+          getPrefix(cardNumber, 0, 4) === '4936' 
+        ):
+          if(length === 16 || length === 18 || length === 19) {
+            return "Switch";
+          }
+          break;
   //Discover
-  case (prefix4 === '6011' || Number(prefix3) >= 644 && Number(prefix3) <= 649 || prefix2 === '65'):
-     if (length === 16 || length === 19) {
-       return "Discover";
-     }
-     break;
-    
+  case (
+          getPrefix(cardNumber, 0, 4) === '6011' || 
+          getRange(644, 649).includes(Number(getPrefix(cardNumber, 0, 3))) || 
+          getPrefix(cardNumber, 0, 2) === '65'
+        ):
+          if (length === 16 || length === 19) {
+            return "Discover";
+          }
+          break;
   //Maestro
-  case (prefix4 === '5018' || prefix4 === '5020' || prefix4 === '5038' || prefix4 === '6304'):
-    if (length >= 12 && length <= 19) {
-      return "Maestro";
-    } 
+  case (
+          getPrefix(cardNumber, 0, 4) === '5018' || 
+          getPrefix(cardNumber, 0, 4) === '5020' || 
+          getPrefix(cardNumber, 0, 4) === '5038' || 
+          getPrefix(cardNumber, 0, 4) === '6304'
+        ):
+          if (getRange(12, 19).includes(length)) {
+            return "Maestro";
+          } 
+          break;
+  // MasterCard
+  case (
+          getRange(51, 55).includes(Number(getPrefix(cardNumber, 0, 2)))
+        ):
+          if (length === 16) {
+            return "MasterCard";
+          }
+          break;
+  // //Diner's Club
+  case (
+          getPrefix(cardNumber, 0, 2) === '38' || 
+          getPrefix(cardNumber, 0, 2) === '39'
+        ):
+          if (length === 14) {
+            return "Diner\'s Club";
+          }
+          break;
+  //American Express
+  case (
+          getPrefix(cardNumber, 0, 2) === '34' || 
+          getPrefix(cardNumber, 0, 2) === '37'
+        ):
+          if(length === 15) {
+            return "American Express";
+          }
+          break;
+  //Visa
+  case (
+          getPrefix(cardNumber, 0, 1) === '4'
+        ):
+          if (length === 13 || length === 16 || length === 19) {
+            return "Visa";
+          }
  }
 }; 
+
+function getRange(start, end) {
+  var indices = Array.from(Array(end + 1 - start).keys()); // create an array of indices from low to high value
+  return indices.map(function(range, index) {
+    return range += start;
+  }, []);
+}
+
+function getPrefix(number, start, end) {
+  return number.slice(start, end); 
+}
 
 
 
